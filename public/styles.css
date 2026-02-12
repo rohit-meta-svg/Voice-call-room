@@ -1,0 +1,135 @@
+root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #2b3a5f 0%, #0f172a 45%, #020617 100%);
+  color: #e2e8f0;
+}
+
+.app {
+  max-width: 780px;
+  margin: 3rem auto;
+  padding: 1rem;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.4);
+}
+
+.hidden {
+  display: none;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-top: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tab,
+button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #0ea5e9;
+  color: white;
+}
+
+.tab {
+  background: #334155;
+}
+
+.tab.active {
+  background: #0ea5e9;
+}
+
+.form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+input {
+  border: 1px solid #334155;
+  background: #0b1220;
+  color: #e2e8f0;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+}
+
+.message {
+  min-height: 1.4rem;
+  color: #7dd3fc;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.secondary {
+  background: #334155;
+}
+
+.room-controls,
+.call-controls {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.room-controls input {
+  flex: 1;
+}
+
+#participants {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+#participants li {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.7rem;
+}
+
+@media (max-width: 700px) {
+  .header-row,
+  .room-controls,
+  .call-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

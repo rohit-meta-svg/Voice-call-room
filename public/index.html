@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voice Group Call Rooms</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section id="authCard" class="card">
+        <h1>Group Voice Rooms</h1>
+        <p class="subtitle">Create or join clean audio call rooms.</p>
+
+        <div class="tabs">
+          <button id="tabSignup" class="tab active" type="button">Sign up</button>
+          <button id="tabSignin" class="tab" type="button">Sign in</button>
+        </div>
+
+        <form id="signupForm" class="form">
+          <label>Username<input type="text" name="username" required minlength="3" /></label>
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Password<input type="password" name="password" required minlength="6" /></label>
+          <button type="submit">Create account</button>
+        </form>
+
+        <form id="signinForm" class="form hidden">
+          <label>Username<input type="text" name="username" required /></label>
+          <label>Password<input type="password" name="password" required /></label>
+          <button type="submit">Sign in</button>
+        </form>
+
+        <p id="authMessage" class="message" role="status"></p>
+      </section>
+
+      <section id="callCard" class="card hidden">
+        <div class="header-row">
+          <div>
+            <h2>Welcome, <span id="currentUser"></span></h2>
+            <p class="subtitle">Start a room and talk in real time.</p>
+          </div>
+          <button id="logoutBtn" class="secondary" type="button">Logout</button>
+        </div>
+
+        <div class="room-controls">
+          <input id="roomInput" placeholder="Enter room name (e.g. design-team)" maxlength="50" />
+          <button id="joinBtn" type="button">Create / Join Room</button>
+        </div>
+
+        <div class="call-controls">
+          <button id="muteBtn" class="secondary" type="button">Mute</button>
+          <span id="roomStatus">Not connected to a room</span>
+        </div>
+
+        <h3>People in room</h3>
+        <ul id="participants"></ul>
+      </section>
+    </main>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
+public/styles.css
+public/styles.css
+New
++135
+-0
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #2b3a5f 0%, #0f172a 45%, #020617 100%);
+  color: #e2e8f0;
+}
+
+.app {
+  max-width: 780px;
+  margin: 3rem auto;
+  padding: 1rem;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.4);
+}
+
+.hidden {
+  display: none;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-top: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tab,
+button {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #0ea5e9;
+  color: white;
+}
+
+.tab {
+  background: #334155;
+}
+
+.tab.active {
+  background: #0ea5e9;
+}
+
+.form {
+  display: grid;
+  gap: 0.85rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+input {
+  border: 1px solid #334155;
+  background: #0b1220;
+  color: #e2e8f0;
+  border-radius: 0.6rem;
+  padding: 0.6rem;
+}
+
+.message {
+  min-height: 1.4rem;
+  color: #7dd3fc;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.secondary {
+  background: #334155;
+}
+
+.room-controls,
+.call-controls {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.room-controls input {
+  flex: 1;
+}
+
+#participants {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+#participants li {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.7rem;
+}
+
+@media (max-width: 700px) {
+  .header-row,
+  .room-controls,
+  .call-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+server.js
+server.js
+New
++42
+-0
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8'
+};
+
+const server = http.createServer((req, res) => {
+  const cleanUrl = req.url === '/' ? '/index.html' : req.url;
+  const safePath = path.normalize(cleanUrl).replace(/^\.\.(\/|\\|$)/, '');
+  const filePath = path.join(PUBLIC_DIR, safePath);
+
+  if (!filePath.startsWith(PUBLIC_DIR)) {
+    res.writeHead(403);
+    res.end('Forbidden');
+    return;
+  }
+
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Not found');
+      return;
+    }
+
+    const ext = path.extname(filePath).toLowerCase();
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+    res.end(content);
+  });
+});
+
+server.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`Server running at http://localhost:${PORT}`);
+});
